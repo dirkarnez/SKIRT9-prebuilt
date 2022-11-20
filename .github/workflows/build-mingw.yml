@@ -23,7 +23,7 @@ jobs:
       - name: curl winlibs-x86_64-posix-seh-gcc-11.2.0-mingw-w64-9.0.0-r1.zip
         shell: cmd
         run: |
-          curl https://github.com/brechtsanders/winlibs_mingw/releases/download/11.2.0-12.0.1-9.0.0-r1/winlibs-x86_64-posix-seh-gcc-11.2.0-mingw-w64-9.0.0-r1.zip -L --output x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z && dir && 7z.exe x winlibs-x86_64-posix-seh-gcc-11.2.0-mingw-w64-9.0.0-r1.zip
+          curl https://github.com/brechtsanders/winlibs_mingw/releases/download/11.2.0-12.0.1-9.0.0-r1/winlibs-x86_64-posix-seh-gcc-11.2.0-mingw-w64-9.0.0-r1.zip -L --output winlibs-x86_64-posix-seh-gcc-11.2.0-mingw-w64-9.0.0-r1.zip && dir && 7z.exe x winlibs-x86_64-posix-seh-gcc-11.2.0-mingw-w64-9.0.0-r1.zip
         
       - name: curl cmake-3.24.0-windows-x86_64.zip
         shell: cmd
@@ -43,8 +43,10 @@ jobs:
             ${{ github.workspace }}\cmake-3.24.0-windows-x86_64\bin;^
             gcc --version &&^
             cd SKIRT9 &&^
+            ${{ github.workspace }}\PortableGit\usr\bin\sed.exe '/^anothervalue=.*/a after=me' SKIRT\main\CMakeLists.txt
             cmake.exe -G "MinGW Makefiles" ^
             -DCMAKE_BUILD_TYPE=Release ^
+            -DCMAKE_EXE_LINKER_FLAGS="${CMAKE_EXE_LINKER_FLAGS} -static" ^
             -DCMAKE_CXX_FLAGS="-D_WIN64=1 -DWIN64=1" ^
             -DBUILD_DOX_STYLE=OFF ^
             -DBUILD_MAKE_UP=OFF ^
@@ -52,16 +54,23 @@ jobs:
             -DCMAKE_INSTALL_PREFIX="cmake-build/${{ env.cmakeInstallationPath }}" -B./cmake-build &&^
             cd cmake-build && cmake --build . && cmake --install . 
             
+      - name: copy exe
+        shell: cmd
+        run: |
+          cd /d "${{ github.workspace }}\SKIRT9\cmake-build\SKIRT\main" &&^
+          mkdir "export" &&^
+          xcopy /H /Y /C "skirt.exe" "export"
+      
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          directory: "SKIRT9/cmake-build/${{ env.cmakeInstallationPath }}"
+          directory: "SKIRT9/cmake-build/SKIRT/main/export"
           filename: "${{ env.mingwTargetZip }}"
           
       - name: Release prebuilt
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "SKIRT9/cmake-build/${{ env.cmakeInstallationPath }}/${{ env.mingwTargetZip }}"
+          artifacts: "SKIRT9/cmake-build/SKIRT/main/export/${{ env.mingwTargetZip }}"
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
