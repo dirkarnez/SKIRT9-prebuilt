@@ -15,3 +15,6 @@ SKIRT9-prebuilt
     - New folder
       - New folder
         - skirt.exe
+
+### Download links
+- [The SKIRT project: Download SKIRT resource packs (Windows)](https://skirt.ugent.be/root/_download_resource_packs.html)
