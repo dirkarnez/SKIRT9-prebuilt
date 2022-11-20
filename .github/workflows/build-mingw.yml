@@ -45,7 +45,7 @@ jobs:
             cd SKIRT9 &&^
             cmake.exe -G "MinGW Makefiles" ^
             -DCMAKE_BUILD_TYPE=Release ^
-            -DCMAKE_EXE_LINKER_FLAGS="${CMAKE_EXE_LINKER_FLAGS} -static" ^
+            -DCMAKE_EXE_LINKER_FLAGS="-static" ^
             -DCMAKE_CXX_FLAGS="-D_WIN64=1 -DWIN64=1" ^
             -DBUILD_DOX_STYLE=OFF ^
             -DBUILD_MAKE_UP=OFF ^
