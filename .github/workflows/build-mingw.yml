@@ -43,7 +43,6 @@ jobs:
             ${{ github.workspace }}\cmake-3.24.0-windows-x86_64\bin;^
             gcc --version &&^
             cd SKIRT9 &&^
-            ${{ github.workspace }}\PortableGit\usr\bin\sed.exe '/^anothervalue=.*/a after=me' SKIRT\main\CMakeLists.txt
             cmake.exe -G "MinGW Makefiles" ^
             -DCMAKE_BUILD_TYPE=Release ^
             -DCMAKE_EXE_LINKER_FLAGS="${CMAKE_EXE_LINKER_FLAGS} -static" ^
